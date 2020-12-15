@@ -1,0 +1,54 @@
+.navbar {
+  margin: auto;
+  width: 100%;
+  padding: 0px 10px 0px 10px;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  position: fixed;
+  top:0;
+  background-color: white;
+}
+#navbar-placeholder {
+  margin-top: 40px;
+}
+.navbar-button {
+  background-color: white;
+  border: 2px solid black;
+  padding: 10px;
+  font-family: monospace;
+  font-size: 16px;
+}
+
+#main-content {
+  width: 90%;
+  background-color: #009900;
+  margin: auto;
+}
+
+#playing-area {
+  display: grid;
+  height: 500px;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(5, 1fr);
+  grid-template-areas:
+  "dealer dealer dealer dealer dealer"
+  "dealer dealer dealer dealer dealer"
+  ". . . . ."
+  "player player player player player"
+  "player player player player player";
+}
+
+#npc-cards {
+  grid-area: dealer;
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#player-cards {
+  grid-area: player;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
