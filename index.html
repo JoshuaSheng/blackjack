@@ -2,7 +2,7 @@
 <head>
 <title>Practice Website 11/15/2020</title>
 <link rel="stylesheet" href="style.css">
-<script src="script.js"></script>
+<meta charset="utf-8" />
 </head>
 <body>
   <div class="navbar">
@@ -15,16 +15,22 @@
   <div id="main-content">
     <div id="playing-area">
       <div id="npc-cards">
-        npc-card placeholder
+        <div class="card">Q<br>♥</div>
+        <div class="card">Q<br>♥</div>
+        <div class="card">Q<br>♥</div>
+        <div class="card">Q<br>♥</div>
       </div>
-      <div id="player-cards">player card placeholder</div>
+      <div id="message-box">You Win!</div>
+      <div id="player-cards">
+        <div class="card">Q<br>♥</div>
+      </div>
     </div>
     <div id="player-options">
-      <button type="button">Hit</button>
-      <button type="button">Stand</button>
-      <button type="button"></button>
+      <div class="game-option">Hit</div>
+      <div class="game-option">Stand</div>
     </div>
     <div id="bottombar"></div>
   </div>
 </body>
+<script src="script.js"></script>
 </html>
