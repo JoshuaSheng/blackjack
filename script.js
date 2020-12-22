@@ -55,7 +55,10 @@ function game(bet) {
   let count = 0;
   let cards;
   let dealer_count = 0;
+  let ace_count = 0;
+  let dealer_ace_count = 0;
 
+  this.cleardiv = clear_div
   this.bet = bet
   this.play = function() {
     count = 0;
@@ -63,18 +66,24 @@ function game(bet) {
     cards = new deck()
     cards.shuffle()
     cards = cards.getDeck()
+
     clear_div("#player-options");
     clear_div("#message-box");
     clear_div("#player-cards");
     clear_div("#npc-cards");
-    options();
+    hit()
+    hit()
+
+
+    options(true);
   }
 
-  function options() {
+  function options(first_turn = false) {
+    console.log("options")
     if (count > 21) {
       end(count, 0);
     }
-    if (count == 21) {
+    else if (count == 21) {
       dealer_turn();
     }
     else {
@@ -96,31 +105,41 @@ function game(bet) {
       stand_dom.addEventListener("click", () => {
         clear_div("#player-options")
         dealer_turn()
-        options()
       })
       player_options_dom.appendChild(stand_dom)
+
+      if (first_turn == true && count >= 9 && count <= 11) {
+        let double_dom = document.createElement("double")
+        double_dom.classList.add("game-option")
+        double_dom.innerHTML = "Double"
+        double_dom.addEventListener("click", () => {
+          clear_div("#player-options")
+          double()
+        })
+        player_options_dom.appendChild(double_dom)
+      }
     }
   }
 
   function hit() {
     let draw = cards.pop();
-    create_card(draw, "#player-cards")
     count += draw.value
-  }
+    if (draw.value == 1) {
+      count += 10
+      ace_count += 1;
+    }
+    create_card(draw, "#player-cards")
 
-  function clear_div(query) {
-    let div = document.querySelector(query)
-    while (div.firstChild) {
-      div.removeChild(div.firstChild)
+    if (count > 21 && ace_drawn > 0) {
+      count -= 10
+      ace_drawn -= 1;
     }
   }
 
-  function create_card(card, location) {
-    let card_dom = document.createElement("div")
-      card_dom.classList.add("card")
-      card_dom.innerHTML = card.name + "<br>" + "&" + card.suit + ";"
-      console.log(card_dom)
-      document.querySelector(location).appendChild(card_dom)
+  function double() {
+    this.bet = this.bet*2
+    hit()
+    dealer_turn()
   }
 
   function dealer_turn() {
@@ -128,11 +147,20 @@ function game(bet) {
       let draw = cards.pop();
       create_card(draw, "#npc-cards")
       dealer_count += draw.value;
+      if (draw.value == 1) {
+        dealer_ace_count += 1;
+        dealer_count += 10
+      }
+      if (dealer_count > 21 && dealer_ace_count > 0) {
+        dealer_count -= 10
+        dealer_ace_count -= 1;
+      }
     }
     end(count, dealer_count)
   }
 
   function end(count, dealer_count) {
+    console.log("end")
     clear_div("#player-options");
     let end_message = document.querySelector("#message-box")
     if (count > 21) {
@@ -156,11 +184,20 @@ function game(bet) {
     }
     let play_again = document.createElement("div")
   }
-}
 
-function clear_div(query) {
-  let div = document.querySelector(query)
-  while (div.firstChild) {
-    div.removeChild(div.firstChild)
+  function clear_div(query) {
+    let div = document.querySelector(query)
+    while (div.firstChild) {
+      div.removeChild(div.firstChild)
+    }
   }
+
+  function create_card(card, location) {
+    let card_dom = document.createElement("div")
+      card_dom.classList.add("card")
+      card_dom.innerHTML = card.name + "<br>" + "&" + card.suit + ";"
+      console.log(card_dom)
+      document.querySelector(location).appendChild(card_dom)
+  }
+
 }
