@@ -49,7 +49,13 @@ let init = new (function() {
   };
 })
 
-let newgame = new game(10)
+let start_game_dom = document.querySelector(".start-button")
+start_game_dom.addEventListener("click", () => {
+  new Audio("audio/button-click.wav").play();
+  let start_screen_dom = document.querySelector("#start-screen")
+  start_screen_dom.style.display = "none"
+  new game(10).play()
+})
 
 function game(bet) {
   let count = 0;
@@ -73,7 +79,10 @@ function game(bet) {
     clear_div("#npc-cards");
     hit()
     hit()
+    hit("dealer")
+    hit("dealer")
 
+    document.querySelector("#npc-cards").lastChild.classList.add("hidden")
 
     options(true);
   }
@@ -93,6 +102,7 @@ function game(bet) {
       hit_dom.classList.add("game-option")
       hit_dom.innerHTML = "Hit"
       hit_dom.addEventListener("click", () => {
+        new Audio("audio/button-click.wav").play();
         clear_div("#player-options")
         hit()
         options()
@@ -103,6 +113,7 @@ function game(bet) {
       stand_dom.classList.add("game-option")
       stand_dom.innerHTML = "Stand"
       stand_dom.addEventListener("click", () => {
+        new Audio("audio/button-click.wav").play();
         clear_div("#player-options")
         dealer_turn()
       })
@@ -113,6 +124,7 @@ function game(bet) {
         double_dom.classList.add("game-option")
         double_dom.innerHTML = "Double"
         double_dom.addEventListener("click", () => {
+          new Audio("audio/button-click.wav").play();
           clear_div("#player-options")
           double()
         })
@@ -121,29 +133,22 @@ function game(bet) {
     }
   }
 
-  function hit() {
-    let draw = cards.pop();
-    count += draw.value
-    if (draw.value == 1) {
-      count += 10
-      ace_count += 1;
-    }
-    create_card(draw, "#player-cards")
+  function hit(target="player") {
+    if (target == "player") {
+        let draw = cards.pop();
+        count += draw.value
+        if (draw.value == 1) {
+          count += 10
+          ace_count += 1;
+        }
+        create_card(draw, "#player-cards")
 
-    if (count > 21 && ace_drawn > 0) {
-      count -= 10
-      ace_drawn -= 1;
-    }
-  }
-
-  function double() {
-    this.bet = this.bet*2
-    hit()
-    dealer_turn()
-  }
-
-  function dealer_turn() {
-    while (dealer_count < 17) {
+        if (count > 21 && ace_count > 0) {
+          count -= 10
+          ace_count -= 1;
+        }
+      }
+    else {
       let draw = cards.pop();
       create_card(draw, "#npc-cards")
       dealer_count += draw.value;
@@ -156,6 +161,19 @@ function game(bet) {
         dealer_ace_count -= 1;
       }
     }
+  }
+
+  function double() {
+    this.bet = this.bet*2
+    hit()
+    dealer_turn()
+  }
+
+  function dealer_turn() {
+    document.querySelector("#npc-cards").lastChild.classList.remove("hidden")
+    while (dealer_count < 17) {
+      hit("dealer")
+    }
     end(count, dealer_count)
   }
 
@@ -165,7 +183,6 @@ function game(bet) {
     let end_message = document.querySelector("#message-box")
     if (count > 21) {
       end_message.innerHTML = "BUST"
-      return
     }
     else if (dealer_count > 21) {
       end_message.innerHTML = "Dealer BUST"
@@ -182,7 +199,15 @@ function game(bet) {
     else {
       end_message.innerHTML = "You Lose"
     }
+
     let play_again = document.createElement("div")
+    play_again.innerHTML = "Play Again"
+    play_again.classList.add("game-option")
+    play_again.addEventListener("click", () => {
+      new Audio("audio/button-click.wav").play();
+      new game(10).play()
+    })
+    document.querySelector("#player-options").appendChild(play_again)
   }
 
   function clear_div(query) {
