@@ -51,10 +51,27 @@ let init = new (function() {
 
 let start_game_dom = document.querySelector(".start-button")
 start_game_dom.addEventListener("click", () => {
-  new Audio("audio/button-click.wav").play();
+  new Audio("audio/poker-chips.wav").play();
   let start_screen_dom = document.querySelector("#start-screen")
   start_screen_dom.style.display = "none"
-  new game(10).play()
+  document.querySelector("#bottombar").innerHTML = "Balance: " + init.getBank()
+})
+
+let submit_bet_dom = document.querySelector("#submit-bet")
+submit_bet_dom.addEventListener("submit", (e) => {
+  e.preventDefault();
+  let bet_amount = parseInt(document.querySelector("#bet-amount").value)
+  if (bet_amount > init.getBank()) {
+    alert("You do not have enough money!")
+  }
+  else if (bet_amount <= 0) {
+    alert("You must bet at least $1")
+  }
+  else {
+    document.querySelector("#bet-screen-container").style.display = "none";
+    init.addBank(-bet_amount)
+    new game(bet_amount).play()
+  }
 })
 
 function game(bet) {
@@ -63,32 +80,41 @@ function game(bet) {
   let dealer_count = 0;
   let ace_count = 0;
   let dealer_ace_count = 0;
+  let bet_inner = bet;
+
 
   this.cleardiv = clear_div
-  this.bet = bet
+
   this.play = function() {
+
     count = 0;
     dealer_count = 0;
     cards = new deck()
     cards.shuffle()
     cards = cards.getDeck()
 
+    
+    document.querySelector("#bottombar").innerHTML = "Balance: " + init.getBank()
+
     clear_div("#player-options");
     clear_div("#message-box");
     clear_div("#player-cards");
     clear_div("#npc-cards");
-    hit()
-    hit()
-    hit("dealer")
-    hit("dealer")
 
-    document.querySelector("#npc-cards").lastChild.classList.add("hidden")
+    setTimeout(() => hit(), 500)
 
-    options(true);
+    setTimeout(() => hit(), 1000)
+
+    setTimeout(() => hit("dealer"), 1500)
+
+    setTimeout(() => {
+      hit("dealer")
+      document.querySelector("#npc-cards").lastChild.classList.add("hidden")
+      options(true);
+    }, 2000)
   }
 
   function options(first_turn = false) {
-    console.log("options")
     if (count > 21) {
       end(count, 0);
     }
@@ -164,21 +190,24 @@ function game(bet) {
   }
 
   function double() {
-    this.bet = this.bet*2
+    init.addBank(-1*bet_inner)
+    document.querySelector("#bottombar").innerHTML = "Balance: " + init.getBank()
+    bet_inner = bet_inner*2
     hit()
     dealer_turn()
   }
 
-  function dealer_turn() {
+  async function dealer_turn() {
     document.querySelector("#npc-cards").lastChild.classList.remove("hidden")
     while (dealer_count < 17) {
+      await sleep(500)
       hit("dealer")
     }
     end(count, dealer_count)
   }
 
   function end(count, dealer_count) {
-    console.log("end")
+    console.log(bet_inner)
     clear_div("#player-options");
     let end_message = document.querySelector("#message-box")
     if (count > 21) {
@@ -186,26 +215,29 @@ function game(bet) {
     }
     else if (dealer_count > 21) {
       end_message.innerHTML = "Dealer BUST"
-      init.addBank(bet*2)
+      init.addBank(bet_inner*2)
     }
     else if (dealer_count == count) {
       end_message.innerHTML = "Push"
-      init.addBank(bet)
+      init.addBank(bet_inner)
     }
     else if (count > dealer_count) {
       end_message.innerHTML = "You Win!"
-      init.addBank(bet*2)
+      init.addBank(bet_inner*2)
     }
     else {
       end_message.innerHTML = "You Lose"
     }
 
+    let bottombar = document.querySelector("#bottombar")
+    bottombar.innerHTML = "Balance: " + init.getBank()
+
     let play_again = document.createElement("div")
     play_again.innerHTML = "Play Again"
     play_again.classList.add("game-option")
     play_again.addEventListener("click", () => {
-      new Audio("audio/button-click.wav").play();
-      new game(10).play()
+      new Audio("audio/poker-chips.wav").play();
+      document.querySelector("#bet-screen-container").style.display = "block";
     })
     document.querySelector("#player-options").appendChild(play_again)
   }
@@ -223,6 +255,10 @@ function game(bet) {
       card_dom.innerHTML = card.name + "<br>" + "&" + card.suit + ";"
       console.log(card_dom)
       document.querySelector(location).appendChild(card_dom)
+  }
+
+  function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
   }
 
 }

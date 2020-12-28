@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 <head>
 <title>Practice Website 11/15/2020</title>
@@ -12,24 +13,34 @@
     </div>
   </div>
   <div id="main-content">
+    <div id="bet-screen-container">
+      <div id="bet-screen">
+        <h1>Place Bets</h1>
+        <hr>
+        <form id="submit-bet">
+          <label for="bet-amount">Bet Amount</label>
+          <br>
+          <input id="bet-amount" type="number" name="bet-amount"/>
+          <br>
+          <input type="submit">
+        </form>
+        <div id="bet-balance">
+        </div>
+      </div>
+    </div>
     <div id="playing-area">
       <div id="npc-cards">
-        <div class="card">Q<br>♥</div>
-        <div class="card">Q<br>♥</div>
-        <div class="card">Q<br>♥</div>
-        <div class="card">Q<br>♥</div>
       </div>
-      <div id="message-box">You Win!</div>
+      <div id="message-box">
+      </div>
       <div id="player-cards">
-        <div class="card">Q<br>♥</div>
       </div>
     </div>
     <div id="player-options">
-      <div class="game-option">Hit</div>
-      <div class="game-option">Stand</div>
     </div>
     <div id="bottombar"></div>
   </div>
 </body>
+<audio src="audio/bg.mp3" type="audio/mp3" autoplay=true loop=true></audio>
 <script src="script.js"></script>
 </html>
